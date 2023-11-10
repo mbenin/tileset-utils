@@ -1,3 +1,5 @@
+import argparse
+import os
 from PIL import Image
 
 
@@ -64,13 +66,24 @@ def create_image_from_tiles(unique_tiles, tiles_per_row):
     return combined_image
 
 
-# Utilização das funções:
-tile_width = 32
-tile_height = 32
-tiles_per_row = 10  # Ou qualquer outro número que o usuário deseje
-unique_tiles = extract_unique_tiles('imagem64x64.png', tile_width, tile_height)
+# metódo main
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Extrai tiles únicos de uma imagem e monta um tilemap.')
+    parser.add_argument('--image', type=str,help='Caminho da imagem', required=True)
+    parser.add_argument('--tilesize', type=int, help='Tamanho do tile. Exemplo: 16,32,64', required=True)
+    parser.add_argument('--tilesperrow', type=int, help='Quantidade de tiles por linha', required=True)
 
-combined_image = create_image_from_tiles(unique_tiles, tiles_per_row)
+    args = parser.parse_args()
 
-# Para salvar a nova imagem com os tiles únicos lado a lado
-combined_image.save('combined_tiles.png')
+    tile_width = args.tilesize
+    tile_height = args.tilesize
+    tiles_per_row = args.tilesperrow
+    filename = args.image
+
+    unique_tiles = extract_unique_tiles(filename, tile_width, tile_height)
+    combined_image = create_image_from_tiles(unique_tiles, tiles_per_row)
+
+    # Para salvar a nova imagem com os tiles únicos lado a lado
+    base_name, extension = os.path.splitext(filename)
+    combined_image.save(base_name + '_unique.png')
+
